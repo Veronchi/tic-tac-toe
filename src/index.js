@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import './index.css';
 
 function Square(props) {
-
   return (
     <button
       className="square"
@@ -58,13 +57,36 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      rowNum: 0,
+      colNum: 0,
     };
+  }
+
+  getCoord(num) {
+    const col = this._getColumn(num)
+    const row = this._getRow(num)
+
+    return [col, row];
+  }
+
+  _getColumn(num) {
+    if(num < 3) return 1;
+    else if(num < 6) return 2;
+    return 3;
+  }
+
+  _getRow(num) {
+    if(num < 3) return 1;
+    else if(num < 6) return 2;
+    return 3;
   }
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const col = this._getColumn(i);
+    const row = this._getRow(i);
 
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -77,6 +99,8 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+      rowNum: row,
+      colNum: col,
     });
   }
 
@@ -88,13 +112,14 @@ class Game extends React.Component {
   }
 
   render() {
+    console.log(this.state.rowNum)
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        `Перейти к ходу # ${move}` :
+        `Перейти к ходу #${move} колонка: ${this.state.colNum}, строка: ${this.state.rowNum}` :
         'К началу игры';
       return (
         <li key={move}>
