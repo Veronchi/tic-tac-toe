@@ -53,31 +53,27 @@ class Game extends React.Component {
     super(props);
     this.state = {
       history: [{
-        squares: Array(9).fill(null)
+        squares: Array(9).fill(null),
+        rowNum: 0,
+        colNum: 0,
       }],
       stepNumber: 0,
       xIsNext: true,
-      rowNum: 0,
-      colNum: 0,
     };
   }
 
-  getCoord(num) {
-    const col = this._getColumn(num)
-    const row = this._getRow(num)
-
-    return [col, row];
-  }
-
   _getColumn(num) {
-    if(num < 3) return 1;
-    else if(num < 6) return 2;
+    if (num === 0 || num === 3 || num === 6) {
+      return 1;
+    } else if (num === 1 || num === 4 || num === 7) {
+      return 2;
+    } 
     return 3;
   }
 
   _getRow(num) {
-    if(num < 3) return 1;
-    else if(num < 6) return 2;
+    if (num < 3) return 1;
+    else if (num < 6) return 2;
     return 3;
   }
 
@@ -95,12 +91,12 @@ class Game extends React.Component {
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       history: history.concat([{
-        squares: squares
+        squares: squares,
+        rowNum: row,
+        colNum: col,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-      rowNum: row,
-      colNum: col,
     });
   }
 
@@ -112,14 +108,13 @@ class Game extends React.Component {
   }
 
   render() {
-    console.log(this.state.rowNum)
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        `Перейти к ходу #${move} колонка: ${this.state.colNum}, строка: ${this.state.rowNum}` :
+        `Перейти к ходу #${move} колонка: ${step.colNum}, строка: ${step.rowNum}` :
         'К началу игры';
       return (
         <li key={move}>
