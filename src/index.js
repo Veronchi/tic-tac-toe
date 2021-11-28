@@ -67,7 +67,7 @@ class Game extends React.Component {
       return 1;
     } else if (num === 1 || num === 4 || num === 7) {
       return 2;
-    } 
+    }
     return 3;
   }
 
@@ -100,7 +100,38 @@ class Game extends React.Component {
     });
   }
 
+  _changeBackground(el) {
+    if(el === 0) return;
+
+    let elRowNum = this.state.history[el].rowNum;
+    let elColNum = this.state.history[el].colNum;
+    let elemntIdx = this._calcElementIdx(elRowNum, elColNum);
+    const squares = document.getElementsByClassName("square");
+
+    Array.from(squares).map((square) => square.style.backgroundColor = "");
+
+    let squareElement = squares[elemntIdx];
+
+    squareElement.style.backgroundColor = "aquamarine";
+  }
+
+  _calcElementIdx(row, col) {
+    let currentIdx = 0;
+    
+    if(row === 1) {
+      currentIdx += col;
+    } else if(row === 2) {
+      currentIdx = 3 + col;
+    } else if(row === 3) {
+      currentIdx = 6 + col;
+    }
+
+    return currentIdx - 1;
+  }
+
   jumpTo(step) {
+    this._changeBackground(step)
+
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
