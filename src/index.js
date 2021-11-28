@@ -101,15 +101,14 @@ class Game extends React.Component {
   }
 
   _changeBackground(el) {
+    const squares = document.getElementsByClassName("square");
+    Array.from(squares).map((square) => square.style.backgroundColor = "");
+
     if(el === 0) return;
 
     let elRowNum = this.state.history[el].rowNum;
     let elColNum = this.state.history[el].colNum;
     let elemntIdx = this._calcElementIdx(elRowNum, elColNum);
-    const squares = document.getElementsByClassName("square");
-
-    Array.from(squares).map((square) => square.style.backgroundColor = "");
-
     let squareElement = squares[elemntIdx];
 
     squareElement.style.backgroundColor = "aquamarine";
