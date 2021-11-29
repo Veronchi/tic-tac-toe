@@ -14,35 +14,51 @@ function Square(props) {
 
 }
 
+function Row(props) {
+  return (<div className="board-row">{props.children}</div>)
+}
+
 class Board extends React.Component {
 
-  renderSquare(i) {
+  createSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
     );
   }
 
+  createRow(i, squares) {
+    return (
+      <Row key={i}>{squares}</Row>
+    )
+  }
+
+  getSquare(num) {
+    let arrSquares = []
+    for (let i = 0; i < num; i++) {
+      arrSquares.push(this.createSquare(i));
+    }
+    return arrSquares;
+  }
+
+  getRows(num, squares) {
+    let arrRows = []
+    for (let i = 0; i < num; i++) {
+      arrRows.push(this.createRow(i, squares.splice(0, 3)));
+    }
+    return arrRows;
+  }
+
   render() {
+    const squares = this.getSquare(9);
+    const rows = this.getRows(3, squares);
+
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {rows}
       </div>
     );
   }
@@ -60,21 +76,6 @@ class Game extends React.Component {
       stepNumber: 0,
       xIsNext: true,
     };
-  }
-
-  _getColumn(num) {
-    if (num === 0 || num === 3 || num === 6) {
-      return 1;
-    } else if (num === 1 || num === 4 || num === 7) {
-      return 2;
-    }
-    return 3;
-  }
-
-  _getRow(num) {
-    if (num < 3) return 1;
-    else if (num < 6) return 2;
-    return 3;
   }
 
   handleClick(i) {
@@ -100,11 +101,35 @@ class Game extends React.Component {
     });
   }
 
+  _getColumn(num) {
+    if (num === 0 || num === 3 || num === 6) {
+      return 1;
+    } else if (num === 1 || num === 4 || num === 7) {
+      return 2;
+    }
+    return 3;
+  }
+
+  _getRow(num) {
+    if (num < 3) return 1;
+    else if (num < 6) return 2;
+    return 3;
+  }
+
+  jumpTo(step) {
+    this._changeBackground(step)
+
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    })
+  }
+
   _changeBackground(el) {
     const squares = document.getElementsByClassName("square");
     Array.from(squares).map((square) => square.style.backgroundColor = "");
 
-    if(el === 0) return;
+    if (el === 0) return;
 
     let elRowNum = this.state.history[el].rowNum;
     let elColNum = this.state.history[el].colNum;
@@ -116,25 +141,16 @@ class Game extends React.Component {
 
   _calcElementIdx(row, col) {
     let currentIdx = 0;
-    
-    if(row === 1) {
+
+    if (row === 1) {
       currentIdx += col;
-    } else if(row === 2) {
+    } else if (row === 2) {
       currentIdx = 3 + col;
-    } else if(row === 3) {
+    } else if (row === 3) {
       currentIdx = 6 + col;
     }
 
     return currentIdx - 1;
-  }
-
-  jumpTo(step) {
-    this._changeBackground(step)
-
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0,
-    })
   }
 
   render() {
