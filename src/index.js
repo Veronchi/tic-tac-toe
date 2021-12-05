@@ -6,6 +6,7 @@ function Square(props) {
   return (
     <button
       className="square"
+      style={{ backgroundColor: props.backgroundColor }}
       onClick={props.onClick}
     >
       {props.value}
@@ -25,6 +26,7 @@ class Board extends React.Component {
       <Square
         key={i}
         value={this.props.squares[i]}
+        backgroundColor={this.props.backgroundColor}
         onClick={() => this.props.onClick(i)}
       />
     );
@@ -75,6 +77,7 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      backgroundColor: 'white',
     };
   }
 
@@ -117,26 +120,16 @@ class Game extends React.Component {
   }
 
   jumpTo(step) {
-    this._changeBackground(step)
+    this._changeBackground();
 
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
-    })
+    });
   }
 
-  _changeBackground(el) {
-    const squares = document.getElementsByClassName("square");
-    Array.from(squares).map((square) => square.style.backgroundColor = "");
-
-    if (el === 0) return;
-
-    let elRowNum = this.state.history[el].rowNum;
-    let elColNum = this.state.history[el].colNum;
-    let elemntIdx = this._calcElementIdx(elRowNum, elColNum);
-    let squareElement = squares[elemntIdx];
-
-    squareElement.style.backgroundColor = "aquamarine";
+  _changeBackground() {
+    this.setState({backgroundColor: "aquamarine"});
   }
 
   _calcElementIdx(row, col) {
@@ -182,6 +175,7 @@ class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
+            backgroundColor={this.state.backgroundColor}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
